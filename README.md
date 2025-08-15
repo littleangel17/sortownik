@@ -1,40 +1,51 @@
-# Sortownik Danych Pomiarowych v1.1
+# Menedżer Danych Pomiarowych v2.0
 
 ## 1. Wprowadzenie
 
-**Sortownik Danych Pomiarowych** to prosta, ale potężna aplikacja desktopowa napisana w języku Python, wykorzystująca bibliotekę Tkinter. Została stworzona z myślą o studentach i badaczach, zwłaszcza z dziedzin takich jak chemia, fizyka czy biologia. Jej głównym celem jest błyskawiczne uporządkowanie folderów zawierających duże ilości danych pomiarowych z eksperymentów. Rozwój aplikacji był wspomagany przez zaawansowany model sztucznej inteligencji *Google Gemini*.
+**Menedżer Danych Pomiarowych** to zintegrowane narzędzie 2-w-1, zaprojektowane z myślą o studentach, badaczach i każdej osobie pracującej z dużą liczbą plików pomiarowych. Aplikacja, napisana w języku Python z użyciem biblioteki Tkinter, łączy w sobie dwie kluczowe funkcjonalności: uniwersalny sortownik plików oraz dedykowany analizator danych w formacie `.sit`.
 
-Aplikacja automatycznie skanuje wskazany folder, identyfikuje pliki o różnych rozszerzeniach (np. `.txt`, `.alt`, `.sit`, `.xls` itd.) i przenosi je do dedykowanych podfolderów, przywracając porządek i znacznie zwiększając efektywność pracy.
+Rozwój aplikacji był wspomagany przez zaawansowany model sztucznej inteligencji **Google Gemini**, co pozwoliło na szybkie zintegrowanie złożonej logiki przetwarzania danych w prostym i intuicyjnym interfejsie graficznym.
 
 ## 2. Kluczowe Funkcje
 
-*   **Graficzny Interfejs Użytkownika:** Prosta i intuicyjna obsługa, niewymagająca znajomości linii komend.
-*   **Wybór Dowolnego Folderu:** Użytkownik może w łatwy sposób wskazać katalog, który chce uporządkować.
-*   **Automatyczne Sortowanie:** Aplikacja sama wykrywa wszystkie unikalne rozszerzenia plików i tworzy dla nich odpowiednie podfoldery (np. `txt`, `alt`, `xls`).
-*   **Obsługa Plików Bez Rozszerzeń:** Pliki, które nie posiadają formalnego rozszerzenia, są grupowane w specjalnym folderze `Pliki_Bez_Rozszerzenia`.
-*   **Idempotentność:** Program można uruchamiać wielokrotnie na tym samym folderze. Nowe pliki zostaną posortowane do już istniejących podfolderów bez tworzenia duplikatów.
-*   **Dziennik Operacji:** Wbudowana konsola na bieżąco informuje użytkownika o postępach: tworzeniu folderów i przenoszeniu każdego pliku.
+Aplikacja składa się z dwóch niezależnych, ale uzupełniających się modułów:
 
-## 3. Jak to działa? (Zasada działania)
+### Moduł 1: Sortownik Plików
+*   **Cel:** Błyskawiczne porządkowanie dowolnego folderu.
+*   **Działanie:** Użytkownik wybiera folder, a aplikacja automatycznie skanuje go i przenosi wszystkie pliki do dedykowanych podfolderów, nazwanych zgodnie z ich rozszerzeniami (np. pliki `.pdf` trafiają do folderu `pdf`, a `.jpg` do `jpg`).
+*   **Obsługa Plików Bez Rozszerzeń:** Pliki, które nie posiadają formalnego rozszerzenia, są bezpiecznie grupowane w folderze `Pliki_Bez_Rozszerzenia`.
+*   **Idempotentność:** Można go uruchamiać wielokrotnie na tym samym folderze bez ryzyka tworzenia duplikatów czy błędów.
 
-Skrypt wykonuje następujące kroki:
-1.  Pobiera listę wszystkich elementów w wybranym folderze.
-2.  Iteruje po każdym elemencie, ignorując istniejące podfoldery i przetwarzając tylko pliki.
-3.  Dla każdego pliku identyfikuje jego rozszerzenie (np. `.txt`). Nazwa docelowego podfolderu jest tworzona na podstawie tego rozszerzenia, ale bez kropki (`txt`).
-4.  Sprawdza, czy podfolder o danej nazwie już istnieje. **Jeśli nie, tworzy go.**
-5.  Przenosi plik do odpowiedniego podfolderu.
+### Moduł 2: Analizator Plików `.sit`
+*   **Cel:** Przetworzenie surowych danych z plików `.sit`, agregacja i zapis w postaci czytelnego pliku Excel.
+*   **Działanie:** Proces jest w pełni zautomatyzowany i przebiega w dwóch etapach:
+    1.  **Konwersja (`.sit` -> `.txt`):** Aplikacja rekursywnie przeszukuje wybrany folder, znajduje wszystkie pliki `.sit`, kopiuje je do nowego podfolderu `txt_z_sit`, a następnie zmienia ich rozszerzenie na `.txt`.
+    2.  **Analiza i Agregacja (`.txt` -> `.xlsx`):** Następnie, aplikacja automatycznie analizuje dane z nowo utworzonych plików `.txt` w folderze `txt_z_sit`. Każdy plik jest przetwarzany i umieszczany jako osobny, posortowany alfabetycznie arkusz w zbiorczym pliku `wyniki.xlsx`, który jest zapisywany w głównym folderze roboczym.
 
-Dzięki temu podejściu aplikacja jest bezpieczna i efektywna przy wielokrotnym stosowaniu.
+*   **Graficzny Interfejs Użytkownika:** Prosta i intuicyjna obsługa obu modułów z jednego okna.
+*   **Dziennik Operacji:** Wbudowana konsola na bieżąco informuje użytkownika o wszystkich wykonywanych krokach, od tworzenia folderów po status generowania pliku Excel.
+
+## 3. Jak to działa? (Przepływ Pracy)
+
+1.  Użytkownik uruchamia aplikację i klika **"Wybierz Folder"**, aby wskazać katalog roboczy.
+2.  Po wybraniu folderu aktywują się dwa przyciski:
+    *   **"1. Uporządkuj Pliki w Folderze"**: Uruchamia Moduł 1.
+    *   **"2. Przetwórz .sit i Generuj Excel"**: Uruchamia Moduł 2.
+3.  Użytkownik wybiera interesującą go operację.
+4.  Aplikacja wykonuje zadanie, na bieżąco raportując postępy w **Dzienniku Operacji**.
+5.  Po zakończeniu operacji wyświetlany jest komunikat o sukcesie.
 
 ## 4. Wymagania i Instalacja
 
 ### 4.1. Zależności
-Do poprawnego działania aplikacji wymagane są następujące biblioteki:
+Do poprawnego działania aplikacji wymagane są:
 - Python 3.x (zalecany 3.8 lub nowszy)
 - Tkinter (standardowo dołączany do Pythona; w niektórych dystrybucjach Linuksa może wymagać instalacji, np. `sudo apt-get install python3-tk`)
 - Pandas
+- Openpyxl (do zapisu plików `.xlsx`)
 
 ### 4.2. Instalacja
-Otwórz terminal (Wiersz polecenia, PowerShell, Terminal) i zainstaluj bibliotekę `pandas` za pomocą poniższej komendy:
+Otwórz terminal (Wiersz polecenia, PowerShell, Terminal) i zainstaluj wymagane biblioteki za pomocą poniższej komendy:
 ```bash
-pip install pandas
+pip install pandas openpyxl
+```
